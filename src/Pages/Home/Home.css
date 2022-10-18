@@ -1,0 +1,40 @@
+.explained {
+  width: 100%;
+  position: relative;
+  /* padding-top: 75px;
+  padding-bottom: 75px; */
+  background: #f2c3b1;
+}
+/* 
+.explained::before {
+  content: "";
+  background-image: url(https://novo-estilo-app.web.app/statics/imagens/f1.png);
+  top: -1px;
+  height: 170px;
+  position: absolute;
+  width: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  left: 0px;
+}
+
+.explained::after {
+  content: "";
+  background-image: url(https://novo-estilo-app.web.app/statics/imagens/f2.png);
+  bottom: -1px;
+  height: 170px;
+  position: absolute;
+  width: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-y: bottom;
+  left: 0px;
+} */
+
+.explainedText {
+  color: #934c63;
+  margin: .75em 0;
+  line-height: 1.5em;
+  letter-spacing: 0.02em;
+  padding: 24px;
+}

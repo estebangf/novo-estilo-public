@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "novo-estilo-app"
+  },
+  "targets": {
+    "novo-estilo-app": {
+      "hosting": {
+        "turns": [
+          "novo-estilo-turnos"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
