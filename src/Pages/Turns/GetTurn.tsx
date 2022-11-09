@@ -10,7 +10,28 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import VideoLabelIcon from '@mui/icons-material/VideoLabel';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 import { StepIconProps } from '@mui/material/StepIcon';
-import { Avatar, Button, Checkbox, Zoom, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, ListSubheader, Paper, Typography, TextField, MenuItem, Select, FormControl, InputLabel, Icon, CircularProgress } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  Checkbox,
+  Zoom,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  ListSubheader,
+  Paper,
+  Typography,
+  TextField,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Icon,
+  CircularProgress,
+  Alert
+} from '@mui/material';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AssignmentTurnedIn, DateRangeOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +39,8 @@ import Turn, { getDate, getTime, turnConverter, TurnsListExtra, TURNS_COLLECTION
 import { onSnapshot, query, collection, orderBy, updateDoc, doc, where, Timestamp, addDoc } from 'firebase/firestore';
 import { useApp } from '../../Tools/Hooks';
 import NotificationModel, { notificationConverter, NOTIFICATIONS_COLLECTION } from '../../Models/Notifications';
-import { Works } from '../../Models/Work';
+import { WorkNameType, Works } from '../../Models/Work';
+import ListItemWork from '../../Components/ListItemWork/ListItemWork';
 
 
 const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
@@ -94,7 +116,7 @@ function GetTurn() {
   const [activeStep, setActiveStep] = useState(0);
   const [checkZoom, setCheckZoom] = useState(false);
   const [savedTurn, setSavedTurn] = useState(false);
-  const [works, setWorks] = useState<string[]>([]);
+  const [works, setWorks] = useState<WorkNameType[]>([]);
   const [turn, setTurn] = useState<Turn>();
   const [date, setDate] = useState<number>(-1);
   const [hour, setHour] = useState<number>(-1);
@@ -122,8 +144,17 @@ function GetTurn() {
   }, [])
 
   useEffect(() => {
+    setDate(-1);
+    setHour(-1);
+
     let dates: TurnsListExtra = [];
-    turns.map(t => {
+    turns.filter(t => {
+      let band = true;
+      works.forEach(w => {
+        band = band && t.allowedWorks.includes(w)
+      });
+      return band;
+    }).map(t => {
       let index = dates.findIndex(e => e.date == getDate(t))
       if (index != -1)
         dates[index].turns.push(t)
@@ -135,11 +166,11 @@ function GetTurn() {
     })
 
     setTurnsList([...dates])
-  }, [turns])
+  }, [works, turns])
 
 
 
-  const changeWorks = (e: string) => {
+  const changeWorks = (e: WorkNameType) => {
     let newWork = e;
     setWorks((prev) => prev.includes(newWork) ?
       prev.filter(w => w != newWork) : [...prev, newWork]
@@ -206,34 +237,13 @@ function GetTurn() {
 
   const papers = [
     <Paper elevation={2} sx={{ margin: 2 }}>
-      <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+      <List dense sx={{ width: '100%', bgcolor: 'background.paper' }}>
         <ListSubheader>¿Que te gustaria que te hagamos?</ListSubheader>
+        {turnsList.length === 0 && <Alert sx={{ ml: 2, mr: 2 }} title='Alerta' severity="warning">
+          No hay turnos disponibles para los retoques seleccionados.
+        </Alert>}
         {Works.map(w => {
-          const labelId = `checkbox-list-secondary-label-${w.name}`;
-          return (
-            <ListItem
-              key={w.name}
-              secondaryAction={
-                <Checkbox
-                  edge="end"
-                  onChange={() => changeWorks(w.name)}
-                  checked={works.indexOf(w.name) !== -1}
-                  inputProps={{ 'aria-labelledby': labelId }}
-                />
-              }
-              disablePadding
-            >
-              <ListItemButton>
-                <ListItemAvatar>
-                  <Avatar
-                    alt={`Item n°${w.name + 1}`}
-                    src={w.img}
-                  />
-                </ListItemAvatar>
-                <ListItemText id={labelId} primary={w.name} />
-              </ListItemButton>
-            </ListItem>
-          );
+          return <ListItemWork _work={w} checked={works.indexOf(w.name) !== -1} changeWorks={changeWorks} />
         })}
       </List>
     </Paper>,
@@ -270,7 +280,7 @@ function GetTurn() {
           onChange={e => setDate(e.target.value as number)}
         >
           <MenuItem value={-1} disabled>Fecha</MenuItem>
-          {turnsList.map((t, index) => <MenuItem value={index}>{t.date}</MenuItem>)}
+          {turnsList.filter(t => t).map((t, index) => <MenuItem value={index}>{t.date}</MenuItem>)}
         </Select>
       </FormControl>
       <FormControl
@@ -378,7 +388,7 @@ function GetTurn() {
   }
 
   return (
-    <Stack sx={{ width: 'fit-content', textAlign: "center", margin: "auto", padding: 3 }} spacing={4}>
+    <Stack sx={{ width: 'fit-content', maxWidth: 360, textAlign: "center", margin: "auto", padding: 3 }} spacing={4}>
       <h1>Nuevo turno</h1>
       <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
         {steps.map((label) => (
