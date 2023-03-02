@@ -4,22 +4,15 @@ import Stack from '@mui/material/Stack';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import Check from '@mui/icons-material/Check';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import VideoLabelIcon from '@mui/icons-material/VideoLabel';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 import { StepIconProps } from '@mui/material/StepIcon';
 import {
-  Avatar,
   Button,
-  Checkbox,
   Zoom,
   List,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
   ListSubheader,
   Paper,
   Typography,
@@ -28,19 +21,20 @@ import {
   Select,
   FormControl,
   InputLabel,
-  Icon,
   CircularProgress,
-  Alert
+  Alert,
+  ButtonBase
 } from '@mui/material';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import { AssignmentTurnedIn, DateRangeOutlined } from '@mui/icons-material';
+import { AssignmentTurnedIn } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import Turn, { getDate, getTime, turnConverter, TurnsListExtra, TURNS_COLLECTION } from '../../Models/Turn';
+import Turn, { getDate, getTime, turnConverter, TurnsListExtra, TURNS_COLLECTION, getExtenseDate } from '../../Models/Turn';
 import { onSnapshot, query, collection, orderBy, updateDoc, doc, where, Timestamp, addDoc } from 'firebase/firestore';
 import { useApp } from '../../Tools/Hooks';
-import NotificationModel, { notificationConverter, NOTIFICATIONS_COLLECTION } from '../../Models/Notifications';
 import { WorkNameType, Works } from '../../Models/Work';
 import ListItemWork from '../../Components/ListItemWork/ListItemWork';
+import LinkStyled from '../../Components/LinkStyled';
+import NotificationModel, { NOTIFICATIONS_COLLECTION, notificationConverter } from '../../Models/Notifications';
 
 
 const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
@@ -125,11 +119,10 @@ function GetTurn() {
 
   const [turns, setTurns] = useState<Turn[]>([])
   const [turnsList, setTurnsList] = useState<TurnsListExtra>([])
-  const [newTurn, setNewTurn] = useState<Turn>()
 
   useEffect(() => {
     // const q = query(collection(db, TURNS_COLLECTION), where("date", ">", "CA"));
-    const unsubscribe = onSnapshot(query(
+    onSnapshot(query(
       collection(app.firestore, TURNS_COLLECTION),
       where("date", ">=", Timestamp.fromDate(new Date())),
       where("reservedBy", "==", null),
@@ -154,9 +147,9 @@ function GetTurn() {
         band = band && t.allowedWorks.includes(w)
       });
       return band;
-    }).map(t => {
+    }).forEach(t => {
       let index = dates.findIndex(e => e.date == getDate(t))
-      if (index != -1)
+      if (index !== -1)
         dates[index].turns.push(t)
       else
         dates.push({
@@ -173,7 +166,7 @@ function GetTurn() {
   const changeWorks = (e: WorkNameType) => {
     let newWork = e;
     setWorks((prev) => prev.includes(newWork) ?
-      prev.filter(w => w != newWork) : [...prev, newWork]
+      prev.filter(w => w !== newWork) : [...prev, newWork]
     )
   }
   useLayoutEffect(() => {
@@ -214,7 +207,7 @@ function GetTurn() {
           console.log("save edited turn: ", r)
           let _notification: NotificationModel = {
             title: "Turno reservado",
-            description: `${name} reservó un turno`,
+            description: `${name} reservó un turno el ${getExtenseDate(reserveTurn)}`,
             date: new Date(),
             url: "/turns/list",
             createdBy: "",
@@ -389,7 +382,12 @@ function GetTurn() {
 
   return (
     <Stack sx={{ width: 'fit-content', maxWidth: 360, textAlign: "center", margin: "auto", padding: 3 }} spacing={4}>
-      <h1>Nuevo turno</h1>
+      <div>
+        <h1 style={{ marginBottom: 0 }}>Nuevo turno</h1>
+        <LinkStyled to='/my-turns' >
+          <Typography sx={{ color: '#adadad' }} variant="caption">Click aquí para buscar tus turnos</Typography>
+        </LinkStyled>
+      </div>
       <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
         {steps.map((label) => (
           <Step key={label}>

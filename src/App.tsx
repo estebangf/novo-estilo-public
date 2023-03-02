@@ -5,7 +5,7 @@ import NotFound from './Pages/NotFound';
 import CircularProgress from './Components/Loading/CircularProgress';
 import { useApp } from './Tools/Hooks';
 import AuthProvider from './Auth/AuthProvider';
-import { GetTurn } from './Pages/Turns';
+import { GetTurn, MyTurns } from './Pages/Turns';
 
 function App() {
   const app = useApp()
@@ -20,6 +20,7 @@ function App() {
             {/* <Route path="/" element={<Home />} /> */}
             <Route path="/" element={<GetTurn />} />
             <Route path="/get-turn" element={<GetTurn />} />
+            <Route path="/my-turns" element={<MyTurns />} />
             <Route path="/about" element={<About />} />
 
             <Route path="*" element={<NotFound />} />

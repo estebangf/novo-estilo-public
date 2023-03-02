@@ -16,7 +16,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     app.auth.onAuthStateChanged(userObserver => {
       if (userObserver) {
         let refUserDoc = doc(app.firestore, "profiles", userObserver.uid)
-        const unsubscribe = onSnapshot(refUserDoc.withConverter(profileConverter), userDocSnapshot => {
+        onSnapshot(refUserDoc.withConverter(profileConverter), userDocSnapshot => {
           if (userDocSnapshot.exists())
             setUser(userObserver)
           setProfile(userDocSnapshot.data())
