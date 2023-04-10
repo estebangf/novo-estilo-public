@@ -23,7 +23,8 @@ import {
   InputLabel,
   CircularProgress,
   Alert,
-  ButtonBase
+  ButtonBase,
+  InputAdornment
 } from '@mui/material';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { AssignmentTurnedIn } from '@mui/icons-material';
@@ -85,7 +86,7 @@ const ColorlibStepIconRoot = styled('div')<{
   }),
 }));
 
-function ColorlibStepIcon(props: StepIconProps) {
+function ColorlibStepIcon (props: StepIconProps) {
   const { active, completed, className } = props;
 
   const icons: { [index: string]: React.ReactElement } = {
@@ -103,7 +104,7 @@ function ColorlibStepIcon(props: StepIconProps) {
 
 const steps = ['Tipo de retoque', 'Selección del turno', 'Datos personales'];
 
-function GetTurn() {
+function GetTurn () {
   const app = useApp()
   const navigate = useNavigate();
 
@@ -194,20 +195,19 @@ function GetTurn() {
   useEffect(() => {
     console.log(turn)
     if (turn && name && phone && activeStep > 2) {
-      let reserveTurn: Turn = {
-        ...turn,
+      let reserveTurnUpdates: { reservedBy: { name: string, phone: string }, works: string[] } = {
         reservedBy: {
           name,
-          phone: parseInt(phone)
+          phone: `+54${phone}`
         },
         works
       }
-      if (reserveTurn.id)
-        updateDoc(doc(app.firestore, TURNS_COLLECTION, reserveTurn.id).withConverter(turnConverter), reserveTurn).then(r => {
+      if (turn.id)
+        updateDoc(doc(app.firestore, TURNS_COLLECTION, turn.id), reserveTurnUpdates).then(r => {
           console.log("save edited turn: ", r)
           let _notification: NotificationModel = {
             title: "Turno reservado",
-            description: `${name} reservó un turno el ${getExtenseDate(reserveTurn)}`,
+            description: `${name} reservó un turno el ${getExtenseDate(turn)}`,
             date: new Date(),
             url: "/turns/list",
             createdBy: "",
@@ -339,6 +339,13 @@ function GetTurn() {
           value={phone}
           onChange={e => (!isNaN(e.target.value as unknown as number) || e.target.value === '')
             && !e.target.value.includes(' ') ? setPhone(e.target.value) : {}}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start" sx={{ pr: 1 }}>
+                +54
+              </InputAdornment>
+            )
+          }}
         />
       </Stack>
     </Paper>,

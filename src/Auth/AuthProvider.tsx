@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, User } from "firebase/auth";
+import { ApplicationVerifier, createUserWithEmailAndPassword, GoogleAuthProvider, RecaptchaVerifier, signInWithEmailAndPassword, signInWithPhoneNumber, signInWithPopup, signOut, User } from "firebase/auth";
 import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import Profile, { PROFILES_COLLECTION, profileConverter, initialProfile } from "../Models/Profile";
@@ -6,7 +6,7 @@ import { useApp } from "../Tools/Hooks";
 import AuthContext from "./AuthContext";
 
 
-function AuthProvider({ children }: { children: React.ReactNode }) {
+function AuthProvider ({ children }: { children: React.ReactNode }) {
   const app = useApp()
 
   const [user, setUser] = useState<User>();
@@ -14,7 +14,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     app.auth.onAuthStateChanged(userObserver => {
+      console.log("userObserver", userObserver)
       if (userObserver) {
+        setUser(userObserver)
+
+
         let refUserDoc = doc(app.firestore, "profiles", userObserver.uid)
         onSnapshot(refUserDoc.withConverter(profileConverter), userDocSnapshot => {
           if (userDocSnapshot.exists())
@@ -43,6 +47,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider value={{
       user,
       profile,
+      newRecaptchaVerifier: (container: HTMLDivElement, callback: Function) => new RecaptchaVerifier(container, {
+        // 'size': 'invisible',
+        'size': 'normal',
+        callback,
+      }, app.auth),
+      signInWithPhoneNumber: (phoneNumber: string, appVerifier: ApplicationVerifier) => signInWithPhoneNumber(app.auth, phoneNumber, appVerifier),
       login: (email: string, password: string) => signInWithEmailAndPassword(app.auth, email, password),
       signin: (name: string, lastname: string, email: string, password: string) =>
         createUserWithEmailAndPassword(app.auth, email, password)
