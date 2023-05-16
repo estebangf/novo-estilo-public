@@ -17,7 +17,7 @@ function MyTurns () {
   const [codeConfirmation, setCodeConfirmation] = useState("") // Codigo recibido
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult>() // Resultado de login para confirmar codigo
 
-  const [myTurns, setMyTurns] = useState<Turn[]>([])
+  const [myTurns, setMyTurns] = useState<Turn[]>()
 
   const container = useRef<HTMLDivElement>(null!)
   const [showingReCaptcha, setShowingReCaptcha] = useState(false)
@@ -148,7 +148,7 @@ function MyTurns () {
           />
         </FormControl>
       )}
-      {myTurns.length === 0 ? (<>
+      {!myTurns ? (<>
         {!confirmationResult ? (
           <div ref={container}></div>
         ) : (
@@ -178,6 +178,8 @@ function MyTurns () {
           </FormControl>
         )}
       </>
+      ) : myTurns.length === 0 ? (
+        <Typography>No se encontraron turnos con el numero ingresado. Ten en cuenta que los turnos anteriores al 10 de abril de 2023 probablemente no aparezcan.</Typography>
       ) : (
         <List>
           {myTurns.map(turn => (
