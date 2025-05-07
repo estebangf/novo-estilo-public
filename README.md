@@ -1,46 +1,82 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Novo Estilo Public
 
-## Available Scripts
+**Novo Estilo Public** es la interfaz pública del sitio web de Novo Estilo, una aplicación desarrollada con **Create React App**, **TypeScript** y **Firebase**. Está diseñada para mostrar contenido dinámico gestionado desde un panel de administración (por ejemplo, mediante Novo Estilo Admin), brindando una experiencia clara y atractiva al usuario final.
 
-In the project directory, you can run:
+## Características
 
-### `npm start`
+- Carga de contenido desde Firebase Firestore en tiempo real.
+- Diseño responsivo y moderno basado en React.
+- Navegación intuitiva y accesible.
+- Alta velocidad de carga gracias al uso de Firebase Hosting y buenas prácticas de desarrollo.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Tecnologías Utilizadas
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- [Create React App](https://create-react-app.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [React](https://reactjs.org/)
+- [Firebase](https://firebase.google.com/) (Firestore, Hosting)
 
-### `npm test`
+## Requisitos Previos
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js v14 o superior
+- Cuenta en Firebase con Firestore configurado
 
-### `npm run build`
+## Instalación y Configuración
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clona el repositorio:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   git clone https://github.com/estebangf/novo-estilo-public.git
+   cd novo-estilo-public
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Instala las dependencias:
 
-### `npm run eject`
+   ```bash
+   npm install
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+3. Configura Firebase:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   - Crea un nuevo proyecto en [Firebase Console](https://console.firebase.google.com/).
+   - Habilita Firestore.
+   - Copia el archivo `.env.example` a `.env` y reemplaza los valores con tu configuración de Firebase.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+4. Inicia la aplicación en modo desarrollo:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+   ```bash
+   npm start
+   ```
 
-## Learn More
+   La aplicación estará disponible en `http://localhost:3000/`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Despliegue
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Para desplegar la aplicación en Firebase Hosting:
+
+1. Inicia sesión en Firebase CLI:
+
+   ```bash
+   firebase login
+   ```
+
+2. Inicializa Firebase en el proyecto (si no se ha hecho previamente):
+
+   ```bash
+   firebase init
+   ```
+
+3. Construye la aplicación para producción:
+
+   ```bash
+   npm run build
+   ```
+
+4. Despliega a Firebase Hosting:
+
+   ```bash
+   firebase deploy
+   ```
+
+Desarrollado por [Esteban García Fernández](https://github.com/estebangf).
